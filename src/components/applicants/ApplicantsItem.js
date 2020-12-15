@@ -18,7 +18,7 @@ function ApplicantsItem({ item }) {
                             checked={checked}
                             onChange={handleChange}
                             color="primary"
-                        />{item.name + ', ' + item.address.address}
+                        />{`${item.name}, ${item.address.address}`}
                     </p>
                     : null
             }

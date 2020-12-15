@@ -25,7 +25,7 @@ function ApplicantsList({ client, applicants }) {
             </Link>
             {
                 addForm
-                    ? <ApplicantForm cauntry={addForm} />
+                    ? <ApplicantForm />
                     : null
             }
         </Paper>
