@@ -1,9 +1,12 @@
+import React from 'react';
+import Container from "@material-ui/core/Container";
 
+import Client from "./components/Client/Client";
 function App() {
   return (
-    <>
-      <h2>Start test projekt</h2>
-    </>
+    <Container maxWidth='lg'>
+      <Client/>
+    </Container>
   );
 }
 
