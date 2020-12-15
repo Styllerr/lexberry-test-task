@@ -12,12 +12,18 @@ function Client() {
     const [clientsList, setClientsList] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const [value, setValue] = useState(null);
+    const [applicants, setApplicants] = useState([]);
+
     const fetchClients = () => {
         inputValue.length < 4
             ? api.get('/clients')
                 .then(resp => setClientsList(resp.data.items))
             : api.get('/clients?search[name]=' + inputValue)
                 .then(resp => setClientsList(resp.data.items))
+    }
+    const fetchApplicants = (id) => {
+        api.get('/applicants?filter[client:id]=' + id)
+                .then(resp => setApplicants(resp.data.items))
     }
     const filterOptions = createFilterOptions({
         limit: 10,
@@ -31,8 +37,8 @@ function Client() {
 
     useEffect(() => {
         value
-            ? console.log('Выброно: ' + value.id)
-            : console.log('Отмена!! ' + value)
+            ? fetchApplicants(value.id)
+            : setApplicants([])
     }, [value])
     return (
         <>
@@ -51,6 +57,7 @@ function Client() {
                     id='combo-box'
                     options={clientsList}
                     getOptionLabel={(option) => option.label}
+                    getOptionSelected={(option) => option.label}
                     size='small'
                     style={{ width: 300 }}
                     renderInput={(params) => <TextField {...params} label='Пошук/вибір клієнта' variant="outlined" />}
@@ -65,12 +72,12 @@ function Client() {
                         </p>
                         <Button variant="contained" color="primary">
                             Зберегти заявку
-            </Button>
+                        </Button>
                     </div>
                     : null}
             </Paper>
             <Paper>
-                <ApplicantsList />
+                <ApplicantsList client={value} applicants={applicants}/>
             </Paper>
         </>
     )

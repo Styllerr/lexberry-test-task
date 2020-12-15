@@ -1,10 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Checkbox from '@material-ui/core/Checkbox';
 
-function ApplicantsItem() {
+
+function ApplicantsItem({ item }) {
+    const [checked, setChecked] = useState(false);
+    
+    const handleChange = (e) => {
+        setChecked(e.target.checked);
+    };
+    
     return (
-        <p>
-            1st applicants
-        </p>
+        <>
+            {
+                item
+                    ? <p>
+                        <Checkbox
+                            checked={checked}
+                            onChange={handleChange}
+                            color="primary"
+                        />{item.name + ', ' + item.address.address}
+                    </p>
+                    : null
+            }
+            
+        </>
     )
 }
 
