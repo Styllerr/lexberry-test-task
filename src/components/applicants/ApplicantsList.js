@@ -6,7 +6,6 @@ import ApplicantsItem from './ApplicantsItem';
 import ApplicantForm from './ApplicantForm';
 
 function ApplicantsList({ client, applicants }) {
-    console.log('client:', client);
     const [addForm, setAddForm] = useState(false);
     const onClick = () => {
         if (client) { setAddForm(true); }
@@ -21,6 +20,7 @@ function ApplicantsList({ client, applicants }) {
             <Link
                 component="button"
                 onClick={onClick}
+                style={styles.addButton}
             >+ Додати
             </Link>
             {
@@ -38,5 +38,9 @@ const styles = {
     paperApplicants: {
         marginBottom: '30px',
         padding: '15px 25px 15px'
-    }
+    },
+    addButton: {
+        textDecoration: 'underline dotted blue',
+        paddingBottom: '2px'
+    },
 }
