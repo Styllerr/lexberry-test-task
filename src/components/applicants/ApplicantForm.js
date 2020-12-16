@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux'
 import Grid from '@material-ui/core/Grid';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -13,23 +14,25 @@ import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 
+import addApplicant from '../../store/actions'
+
 const BLANK = {
     name: '',
     innCode: '',
     country: 'Ukraine',
     address: '',
-    fis: false,
+    fis: true,
     originalName: '',
     originalAddress: ''
 };
-function ApplicantForm() {
+function ApplicantForm({newApplicant, addApplicant}) {
     const [newApplicant, setNewApplicant] = useState([]);
     const [formData, setFormData] = useState(BLANK);
-    const [newData, setNewData] = useState(false);
     const handleChange = (e) => {
-        e.target.value === 'fis'
-            ? setFormData({ ...formData, fis: true })
-            : setFormData({ ...formData, fis: false })
+        console.log('radio changed: ', e.target.value)
+        e.target.value === 'true'
+        ? setFormData({ ...formData, fis: true })
+        : setFormData({ ...formData, fis: false })
     };
     const dataChange = (event) => {
         setFormData({ ...formData, [event.target.name]: event.target.value })
@@ -47,10 +50,9 @@ function ApplicantForm() {
     })
     const onFormSubmit = (data, {resetForm }) => {
         console.log(data);
-        setNewApplicant([...newApplicant, data]);
+        data = {...data, country: formData.country, fis: formData.fis}
+        setNewApplicant([...newApplicant, data ]);
         resetForm();
-        setFormData(BLANK);
-        setNewData(true);
     }
     return (
         <div>
@@ -63,9 +65,9 @@ function ApplicantForm() {
                 <Form>
                     <Grid container spacing={5}>
                         <Grid item xs={12}>
-                            <RadioGroup name="fis" onChange={handleChange} style={styles.radioButtomConteiner}>
-                                <FormControlLabel value='fis' control={<Radio color='default' size='small' />} label='Фізична особа' />
-                                <FormControlLabel value='entity' control={<Radio color='default' size='small' />} label='Юридична особа' />
+                            <RadioGroup name="fis" value={String(formData.fis)} onChange={handleChange} style={styles.radioButtomConteiner}>
+                                <FormControlLabel value='true' control={<Radio color='default' size='small' />} label='Фізична особа' />
+                                <FormControlLabel value='false' control={<Radio color='default' size='small' />} label='Юридична особа' />
                             </RadioGroup>
                         </Grid>
                         <Grid item xs={12}>
@@ -196,17 +198,19 @@ function ApplicantForm() {
             </Formik>
             {newData
                 ? <Paper>
-
                     {JSON.stringify(newApplicant)}
-
                 </Paper>
                 : null
             }
         </div>
     )
 }
+const mapStateToProps = ({ newApplicant }) => ({ newApplicant })
+const mapDispatchToProps = {
+    addApplicant
+};
 
-export default ApplicantForm
+export default connect(mapStateToProps, mapDispatchToProps)(ApplicantForm)
 
 const styles = {
     select: {
