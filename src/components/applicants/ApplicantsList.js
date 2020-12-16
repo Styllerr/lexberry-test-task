@@ -1,22 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
 import Link from '@material-ui/core/Link';
 
 import ApplicantsItem from './ApplicantsItem';
 import ApplicantForm from './ApplicantForm';
+import { showAddForm } from '../../store/actions';
+import NewApplicants from './NewApplicants';
 
-function ApplicantsList({ client, applicants }) {
-    const [addForm, setAddForm] = useState(false);
+function ApplicantsList({ client, applicants, addForm, showAddForm, saveClientData }) {
     const onClick = () => {
-        if (client) { setAddForm(true); }
+        if (client) { showAddForm(true); }
     }
     useEffect(() => {
-        if (!client) { setAddForm(false) }
-    }, [client])
+        if (!client) { showAddForm(false) }
+    }, [client, showAddForm])
     return (
         <Paper style={styles.paperApplicants}>
             <h2>Заявники</h2>
             {applicants.map(item => <ApplicantsItem item={item} key={item.id} />)}
+            <NewApplicants />
             <Link
                 component="button"
                 onClick={onClick}
@@ -28,11 +32,32 @@ function ApplicantsList({ client, applicants }) {
                     ? <ApplicantForm />
                     : null
             }
+            {
+                client
+                    ? <div>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            disableElevation
+                            style={styles.submitButton}
+                            onClick={saveClientData}
+                            >
+                            Зберегти заявку
+                        </Button>
+                    </div>
+                    : null
+            }
+
         </Paper>
     )
 }
 
-export default ApplicantsList
+const mapStateToProps = ({ newApplicants, addForm }) => ({ newApplicants, addForm })
+const mapDispatchToProps = {
+    showAddForm
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ApplicantsList)
 
 const styles = {
     paperApplicants: {
@@ -42,5 +67,8 @@ const styles = {
     addButton: {
         textDecoration: 'underline dotted blue',
         paddingBottom: '2px'
+    },
+    submitButton: {
+        margin: '20px 0'
     },
 }

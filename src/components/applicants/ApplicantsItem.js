@@ -4,11 +4,11 @@ import Checkbox from '@material-ui/core/Checkbox';
 
 function ApplicantsItem({ item }) {
     const [checked, setChecked] = useState(false);
-    
+
     const handleChange = (e) => {
         setChecked(e.target.checked);
     };
-    
+
     return (
         <>
             {
@@ -18,13 +18,19 @@ function ApplicantsItem({ item }) {
                             checked={checked}
                             onChange={handleChange}
                             color="primary"
-                        />{`${item.name}, ${item.address.address}`}
+                        />
+                        <span style={styles.name}>{item.name}</span>
+                        <span>{', ' + item.address.address}</span>
                     </p>
                     : null
             }
-            
         </>
     )
 }
 
 export default ApplicantsItem
+const styles = {
+    name: {
+        fontWeight: 'bold'
+    }
+}

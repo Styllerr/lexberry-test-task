@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -12,34 +12,22 @@ import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
 
-import addApplicant from '../../store/actions'
+import { addApplicant, showAddForm } from '../../store/actions';
 
-const BLANK = {
+const BLANK_FORM = {
     name: '',
     innCode: '',
-    country: 'Ukraine',
     address: '',
-    fis: true,
     originalName: '',
     originalAddress: ''
 };
-function ApplicantForm({newApplicant, addApplicant}) {
-    const [newApplicant, setNewApplicant] = useState([]);
-    const [formData, setFormData] = useState(BLANK);
-    const handleChange = (e) => {
-        console.log('radio changed: ', e.target.value)
-        e.target.value === 'true'
-        ? setFormData({ ...formData, fis: true })
-        : setFormData({ ...formData, fis: false })
-    };
-    const dataChange = (event) => {
-        setFormData({ ...formData, [event.target.name]: event.target.value })
-    }
-    const onClickFind = (event) => {
-        event.preventDefault()
-    }
+const BLANK_SELECTOR = {
+    country: 'Ukraine',
+    fis: true,
+};
+function ApplicantForm({ newApplicants, addApplicant, showAddForm }) {
+
     const newApplicantSchema = yup.object().shape({
         name: yup.string()
             .min(2, 'Very short name')
@@ -48,24 +36,38 @@ function ApplicantForm({newApplicant, addApplicant}) {
             .min(5, 'Very short address')
             .required('Address is required'),
     })
-    const onFormSubmit = (data, {resetForm }) => {
-        console.log(data);
-        data = {...data, country: formData.country, fis: formData.fis}
-        setNewApplicant([...newApplicant, data ]);
-        resetForm();
+
+    const [formSelector, setFormSelector] = useState(BLANK_SELECTOR);
+
+    const handleChange = (e) => {
+        console.log('radio changed: ', e.target.value)
+        e.target.value === 'true'
+            ? setFormSelector({ ...formSelector, fis: true })
+            : setFormSelector({ ...formSelector, fis: false })
+    };
+    const dataChange = (event) => {
+        setFormSelector({ ...formSelector, [event.target.name]: event.target.value })
+    }
+    const onFormSubmit = (data) => {
+        data = { ...data, country: formSelector.country, fis: formSelector.fis }
+        addApplicant(data);
+        showAddForm(false);
+    }
+    const onClickFind = (event) => {
+        event.preventDefault()
     }
     return (
-        <div>
+        <>
             <h4>Додати нового </h4>
             <Formik
-                initialValues={BLANK}
+                initialValues={BLANK_FORM}
                 validateOnBlur
                 validationSchema={newApplicantSchema}
                 onSubmit={onFormSubmit}>
                 <Form>
                     <Grid container spacing={5}>
                         <Grid item xs={12}>
-                            <RadioGroup name="fis" value={String(formData.fis)} onChange={handleChange} style={styles.radioButtomConteiner}>
+                            <RadioGroup name="fis" value={String(formSelector.fis)} onChange={handleChange} style={styles.radioButtomConteiner}>
                                 <FormControlLabel value='true' control={<Radio color='default' size='small' />} label='Фізична особа' />
                                 <FormControlLabel value='false' control={<Radio color='default' size='small' />} label='Юридична особа' />
                             </RadioGroup>
@@ -74,7 +76,7 @@ function ApplicantForm({newApplicant, addApplicant}) {
                             <FormControl variant="outlined" style={styles.select}>
                                 <Select
                                     name='country'
-                                    value={formData.country}
+                                    value={formSelector.country}
                                     type='text'
                                     labelId="select-country"
                                     onChange={dataChange}
@@ -89,7 +91,7 @@ function ApplicantForm({newApplicant, addApplicant}) {
                         <Grid item xs={12} md={6}>
                             <Field name='innCode' type='text'>
                                 {({ field, meta }) => (
-                                    <div>
+                                    <div style={styles.fildWrapper}>
                                         <TextField
                                             {...field}
                                             label="ЄДРПОУ"
@@ -98,23 +100,22 @@ function ApplicantForm({newApplicant, addApplicant}) {
                                             style={styles.code}
                                         />
                                         {meta.touched && meta.error && <div style={styles.error}>{meta.error}</div>}
+                                        <Link
+                                            component="button"
+                                            onClick={onClickFind}
+                                            style={styles.findButton}
+                                        >Знайти в ЄДР
+                            </Link>
                                     </div>
                                 )}
                             </Field>
-
-                            <Link
-                                component="button"
-                                onClick={onClickFind}
-                                style={styles.findButton}
-                            >Знайти в ЄДР
-                        </Link>
                         </Grid>
                     </Grid>
                     <Grid container spacing={2} alignItems="flex-start">
                         <Grid item xs={12} md={6}>
                             <Field name='name' type='text'>
                                 {({ field, meta }) => (
-                                    <div>
+                                    <div style={styles.fildWrapper}>
                                         <TextField
                                             {...field}
                                             label="Назва"
@@ -128,25 +129,24 @@ function ApplicantForm({newApplicant, addApplicant}) {
                             </Field>
                             <Field name='address' type='text'>
                                 {({ field, meta }) => (
-                                    <div>
+                                    <div style={styles.fildWrapper}>
                                         <TextField
                                             {...field}
                                             label="Адреса"
                                             variant="outlined"
-                                            tyle={styles.field}
+                                            style={styles.field}
                                             size='small'
                                         />
                                         {meta.touched && meta.error && <div style={styles.error}>{meta.error}</div>}
                                     </div>
                                 )}
                             </Field>
-
                         </Grid>
-                        {formData.country !== 'Ukraine'
+                        {formSelector.country !== 'Ukraine'
                             ? <Grid item xs={12} md={6}>
                                 <Field name='originalName' type='text'>
                                     {({ field, meta }) => (
-                                        <div>
+                                        <div style={styles.fildWrapper}>
                                             <TextField
                                                 {...field}
                                                 label="Назва мовою походження"
@@ -160,19 +160,18 @@ function ApplicantForm({newApplicant, addApplicant}) {
                                 </Field>
                                 <Field name='originalAddress' type='text'>
                                     {({ field, meta }) => (
-                                        <div>
+                                        <div style={styles.fildWrapper}>
                                             <TextField
                                                 {...field}
                                                 label="Адреса мовою походження"
                                                 variant="outlined"
-                                                tyle={styles.field}
+                                                style={styles.field}
                                                 size='small'
                                             />
                                             {meta.touched && meta.error && <div style={styles.error}>{meta.error}</div>}
                                         </div>
                                     )}
                                 </Field>
-
                             </Grid>
                             : null
                         }
@@ -184,30 +183,17 @@ function ApplicantForm({newApplicant, addApplicant}) {
                             type='submit'
                         >
                             Додати
-                </Button>
+                        </Button>
                     </div>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        disableElevation
-                        style={styles.submitButton}
-                    >
-                        Зберегти заявку
-                </Button>
                 </Form>
             </Formik>
-            {newData
-                ? <Paper>
-                    {JSON.stringify(newApplicant)}
-                </Paper>
-                : null
-            }
-        </div>
+        </>
     )
 }
-const mapStateToProps = ({ newApplicant }) => ({ newApplicant })
+const mapStateToProps = ({ newApplicants }) => ({ newApplicants })
 const mapDispatchToProps = {
-    addApplicant
+    addApplicant,
+    showAddForm
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ApplicantForm)
@@ -223,17 +209,17 @@ const styles = {
     field: {
         minWidth: '85%',
         verticalAlign: 'center',
-        marginBottom: '20px'
+    },
+    fildWrapper: {
+        marginBottom: '20px',
     },
     findButton: {
         height: '40px',
         marginLeft: '20px',
         textDecoration: 'underline dotted blue'
     },
-    submitButton: {
-        margin: '20px 0'
-    },
     radioButtomConteiner: {
         flexDirection: 'row'
-    }
+    },
+    error: { color: 'red' },
 }
