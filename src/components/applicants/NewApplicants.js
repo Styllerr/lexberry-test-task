@@ -5,7 +5,7 @@ import NewApplicantsItem from './NewApplicantsItem';
 function NewApplicants({newApplicants}) {
     return (
         <div>
-            {newApplicants.map( (item, index) => <NewApplicantsItem item={item} index={index} key={index}/>)}
+            {newApplicants.map( (item) => <NewApplicantsItem item={item} key={item.tempID}/>)}
         </div>
     )
 }

@@ -5,14 +5,14 @@ import CloseIcon from '@material-ui/icons/Close';
 
 import {deleteNewApplicant} from '../../store/actions'
 
-function NewApplicantsItem({ item, index, deleteNewApplicant }) {
+function NewApplicantsItem({ item, deleteNewApplicant }) {
     const [checked, setChecked] = useState(true);
 
     const handleChange = (e) => {
         setChecked(e.target.checked);
     };
     const deleteItem = () => {
-        deleteNewApplicant(index);
+        deleteNewApplicant(item.tempID);
     }
     return (
         <p style={styles.row}>

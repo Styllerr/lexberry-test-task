@@ -5,9 +5,9 @@ const initialState = {
     addForm: false,
 };
 
-export default function (state = initialState, { type, payload }) {
+export default function reducer(state = initialState, { type, payload }) {
 
-    const deleteNew = (i) => state.newApplicants.filter((item, index) => index !== i)
+    const deleteNew = (tempID) => state.newApplicants.filter((item) => item.tempID !== tempID)
 
     switch (type) {
         case ADD_APPLICANT:

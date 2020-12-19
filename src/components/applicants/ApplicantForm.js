@@ -48,7 +48,8 @@ function ApplicantForm({ newApplicants, addApplicant, showAddForm }) {
         setFormSelector({ ...formSelector, [event.target.name]: event.target.value })
     }
     const onFormSubmit = (data) => {
-        data = { ...data, country: formSelector.country, fis: formSelector.fis }
+        let tempID = Date.now()
+        data = { ...data, country: formSelector.country, fis: formSelector.fis, tempID }
         addApplicant(data);
         showAddForm(false);
     }
