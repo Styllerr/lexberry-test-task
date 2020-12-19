@@ -33,9 +33,6 @@ function Client({ newApplicants, clearNewApplicant }) {
     });
     useEffect(() => {
         fetchClients();
-    }, [fetchClients]);
-    useEffect(() => {
-        fetchClients();
     }, [inputValue, value, fetchClients]);
 
     useEffect(() => {

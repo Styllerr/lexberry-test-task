@@ -6,7 +6,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import {deleteNewApplicant} from '../../store/actions'
 
 function NewApplicantsItem({ item, index, deleteNewApplicant }) {
-    console.log(item)
     const [checked, setChecked] = useState(true);
 
     const handleChange = (e) => {

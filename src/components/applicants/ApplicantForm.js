@@ -30,17 +30,16 @@ function ApplicantForm({ newApplicants, addApplicant, showAddForm }) {
 
     const newApplicantSchema = yup.object().shape({
         name: yup.string()
-            .min(2, 'Very short name')
-            .required('Name is required'),
+            .min(2, 'Ім`я дуже коротке')
+            .required('Ім`я обов`язкове'),
         address: yup.string()
-            .min(5, 'Very short address')
-            .required('Address is required'),
+            .min(5, 'Адреса дуже коротка')
+            .required('Адреса  обов`язкова'),
     })
 
     const [formSelector, setFormSelector] = useState(BLANK_SELECTOR);
 
     const handleChange = (e) => {
-        console.log('radio changed: ', e.target.value)
         e.target.value === 'true'
             ? setFormSelector({ ...formSelector, fis: true })
             : setFormSelector({ ...formSelector, fis: false })
